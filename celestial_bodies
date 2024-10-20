@@ -1,0 +1,100 @@
+Celestial bodies
+
+psql --username=freecodecamp --dbname=postgres
+CREATE DATABASE universe;
+\c universe
+CREATE TABLE galaxy (
+  galaxy_id SERIAL PRIMARY KEY,  -- Auto-incrementing primary key
+  name VARCHAR(255) UNIQUE NOT NULL,  -- Unique and non-null name
+  galaxy_type TEXT NOT NULL,  -- Using TEXT data type for galaxy type
+  distance_from_earth NUMERIC NOT NULL,  -- Numeric column for distance from Earth
+  age_in_millions_of_years INT NOT NULL,  -- Integer column for age
+  has_life BOOLEAN DEFAULT FALSE  -- Boolean column for life existence
+);
+CREATE TABLE star (
+  star_id SERIAL PRIMARY KEY,  -- Auto-incrementing primary key
+  name VARCHAR(255) UNIQUE NOT NULL,  -- Unique and non-null name
+  galaxy_id INT REFERENCES galaxy(galaxy_id) ON DELETE CASCADE,  -- Foreign key referencing galaxy
+  age_in_millions_of_years INT NOT NULL,  -- Integer column for age
+  is_spherical BOOLEAN DEFAULT TRUE,  -- Boolean column for shape
+  star_type VARCHAR(50) NOT NULL  -- Type of star
+);
+CREATE TABLE planet (
+  planet_id SERIAL PRIMARY KEY,  -- Auto-incrementing primary key
+  name VARCHAR(255) UNIQUE NOT NULL,  -- Unique and non-null name
+  star_id INT REFERENCES star(star_id) ON DELETE CASCADE,  -- Foreign key referencing star
+  planet_type VARCHAR(50) NOT NULL,  -- Type of planet
+  distance_from_star INT NOT NULL,  -- Integer column for distance from star
+  has_life BOOLEAN DEFAULT FALSE  -- Boolean column for life existence
+);
+CREATE TABLE moon (
+  moon_id SERIAL PRIMARY KEY,  -- Auto-incrementing primary key
+  name VARCHAR(255) UNIQUE NOT NULL,  -- Unique and non-null name
+  planet_id INT REFERENCES planet(planet_id) ON DELETE CASCADE,  -- Foreign key referencing planet
+  is_spherical BOOLEAN DEFAULT TRUE,  -- Boolean column for shape
+  distance_from_planet INT NOT NULL  -- Integer column for distance from planet
+);
+CREATE TABLE asteroid (
+  asteroid_id SERIAL PRIMARY KEY,  -- Auto-incrementing primary key
+  name VARCHAR(255) UNIQUE NOT NULL,  -- Unique and non-null name
+  star_id INT REFERENCES star(star_id) ON DELETE CASCADE,  -- Foreign key referencing star
+  size NUMERIC NOT NULL,  -- Numeric column for size of asteroid
+  is_spherical BOOLEAN DEFAULT FALSE  -- Boolean column for shape
+);
+INSERT INTO galaxy (name, galaxy_type, distance_from_earth, age_in_millions_of_years, has_life) 
+VALUES 
+  ('Milky Way', 'Spiral galaxy', 0, 13600, TRUE),
+  ('Andromeda', 'Spiral galaxy', 2537000, 10000, FALSE),
+  ('Triangulum', 'Spiral galaxy', 2997000, 9000, FALSE),
+  ('Whirlpool', 'Spiral galaxy', 23000000, 12000, FALSE),
+  ('Sombrero', 'Elliptical galaxy', 29000000, 13000, FALSE),
+  ('Black Eye', 'Spiral galaxy', 17000000, 8500, FALSE);
+INSERT INTO star (name, galaxy_id, age_in_millions_of_years, is_spherical, star_type)
+VALUES 
+  ('Sun', 1, 4600, TRUE, 'G-type'),
+  ('Proxima Centauri', 2, 4500, TRUE, 'Red Dwarf'),
+  ('Sirius', 1, 300, TRUE, 'A-type'),
+  ('Vega', 1, 455, TRUE, 'A-type'),
+  ('Betelgeuse', 3, 8000, TRUE, 'Red Supergiant'),
+  ('Rigel', 5, 8000, TRUE, 'Blue Supergiant');
+INSERT INTO planet (name, star_id, planet_type, distance_from_star, has_life)
+VALUES 
+  ('Earth', 1, 'Terrestrial', 1, TRUE),
+  ('Mars', 1, 'Terrestrial', 1, FALSE),
+  ('Jupiter', 1, 'Gas Giant', 5, FALSE),
+  ('Saturn', 1, 'Gas Giant', 9, FALSE),
+  ('Proxima b', 2, 'Terrestrial', 4, TRUE),
+  ('Vega I', 4, 'Gas Giant', 10, FALSE),
+  ('Vega II', 4, 'Terrestrial', 2, FALSE),
+  ('Sirius A', 3, 'Gas Giant', 8, FALSE),
+  ('Betelgeuse I', 5, 'Terrestrial', 12, FALSE),
+  ('Betelgeuse II', 5, 'Gas Giant', 15, FALSE),
+  ('Rigel I', 6, 'Terrestrial', 2, FALSE),
+  ('Rigel II', 6, 'Gas Giant', 5, FALSE);
+INSERT INTO moon (name, planet_id, is_spherical, distance_from_planet)
+VALUES 
+  ('Moon', 1, TRUE, 384),
+  ('Phobos', 2, TRUE, 9),
+  ('Deimos', 2, TRUE, 23),
+  ('Io', 3, TRUE, 421),
+  ('Europa', 3, TRUE, 671),
+  ('Ganymede', 3, TRUE, 1070),
+  ('Callisto', 3, TRUE, 1883),
+  ('Titan', 4, TRUE, 1222),
+  ('Rhea', 4, TRUE, 527),
+  ('Iapetus', 4, TRUE, 3561),
+  ('Mimas', 4, TRUE, 185),
+  ('Triton', 5, TRUE, 355000),
+  ('Oberon', 6, TRUE, 580000),
+  ('Vega I Moon', 7, TRUE, 150),
+  ('Vega II Moon', 8, TRUE, 210),
+  ('Sirius A Moon', 9, TRUE, 500),
+  ('Betelgeuse I Moon', 10, TRUE, 350),
+  ('Betelgeuse II Moon', 11, TRUE, 800),
+  ('Rigel I Moon', 12, TRUE, 450),
+  ('Rigel II Moon', 12, TRUE, 1050);
+INSERT INTO asteroid (name, star_id, size, is_spherical)
+VALUES 
+  ('Ceres', 1, 939.4, FALSE),
+  ('Vesta', 1, 525.4, FALSE),
+  ('Hygiea', 3, 431.1, FALSE);
